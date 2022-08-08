@@ -47,6 +47,12 @@
 				},
 				{
 					"name": "DeriveProductType"
+				},
+				{
+					"name": "SelectAdvWorksColumns"
+				},
+				{
+					"name": "SelectWWImportersColumns"
 				}
 			],
 			"scriptLines": [
@@ -123,13 +129,31 @@
 				"/* in will test if the value of the Size column matches any value of this array. Notice the square brackets representing the array */\r",
 				"'Clothing', 'Product'\r",
 				"/* if true, it's clothing, if false it is product */)) ~> DeriveFinalCostAndProductType",
-				"FilterDiscontinued derive(ItemType = /* This script uses case and in to define if the item is clothing or product */\r",
+				"SelectAdvWorksColumns derive(ItemType = /* This script uses case and in to define if the item is clothing or product */\r",
 				"case(\r",
 				"/* case syntax: case(condition, true_expression, false_expression) */\r",
 				"in(['S','M','L','XL'],Size),\r",
 				"/* in will test if the value of the Size column matches any value of this array. Notice the square brackets representing the array */\r",
 				"'Clothing', 'Product'\r",
 				"/* if true, it's clothing, if false it is product */)) ~> DeriveProductType",
+				"FilterDiscontinued select(mapColumn(",
+				"          Name,",
+				"          Color,",
+				"          Cost = StandardCost,",
+				"          RetailPrice = ListPrice,",
+				"          Size",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> SelectAdvWorksColumns",
+				"DeriveFinalCostAndProductType select(mapColumn(",
+				"          Name = StockItemName,",
+				"          Cost,",
+				"          RetailPrice = RecommendedRetailPrice,",
+				"          Size,",
+				"          ItemType",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> SelectWWImportersColumns",
 				"DeriveProductType sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     deletable:false,",
@@ -142,7 +166,7 @@
 				"     skipDuplicateMapOutputs: true,",
 				"     saveOrder: 1,",
 				"     errorHandlingOption: 'stopOnFirstError') ~> MergeDBProductSink",
-				"DeriveFinalCostAndProductType sink(allowSchemaDrift: true,",
+				"SelectWWImportersColumns sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     deletable:false,",
 				"     insertable:true,",
