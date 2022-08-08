@@ -481,6 +481,12 @@
 						},
 						{
 							"name": "FilterDiscontinued"
+						},
+						{
+							"name": "DeriveFinalCostAndProductType"
+						},
+						{
+							"name": "DeriveProductType"
 						}
 					],
 					"scriptLines": [
@@ -549,7 +555,22 @@
 						"WWImportersDBSource sort(asc(StockItemName, true),",
 						"     caseInsensitive: true) ~> SortByName",
 						"AdvWorksDBSource filter(isNull(SellEndDate)) ~> FilterDiscontinued",
-						"FilterDiscontinued sink(allowSchemaDrift: true,",
+						"SortByName derive(Cost = UnitPrice*(1+(TaxRate/100)),",
+						"          ItemType = /* This script uses case and in to define if the item is clothing or product */\r",
+						"case(\r",
+						"/* case syntax: case(condition, true_expression, false_expression) */\r",
+						"in(['S','M','L','3XL','3XS','4XL','5XL','6XL','7XL','XS','XXS','XL','XXL'],Size),\r",
+						"/* in will test if the value of the Size column matches any value of this array. Notice the square brackets representing the array */\r",
+						"'Clothing', 'Product'\r",
+						"/* if true, it's clothing, if false it is product */)) ~> DeriveFinalCostAndProductType",
+						"FilterDiscontinued derive(ItemType = /* This script uses case and in to define if the item is clothing or product */\r",
+						"case(\r",
+						"/* case syntax: case(condition, true_expression, false_expression) */\r",
+						"in(['S','M','L','XL'],Size),\r",
+						"/* in will test if the value of the Size column matches any value of this array. Notice the square brackets representing the array */\r",
+						"'Clothing', 'Product'\r",
+						"/* if true, it's clothing, if false it is product */)) ~> DeriveProductType",
+						"DeriveProductType sink(allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     deletable:false,",
 						"     insertable:true,",
@@ -561,7 +582,7 @@
 						"     skipDuplicateMapOutputs: true,",
 						"     saveOrder: 1,",
 						"     errorHandlingOption: 'stopOnFirstError') ~> MergeDBProductSink",
-						"SortByName sink(allowSchemaDrift: true,",
+						"DeriveFinalCostAndProductType sink(allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     deletable:false,",
 						"     insertable:true,",
