@@ -35,7 +35,11 @@
 					"name": "MergeDBClothesSink"
 				}
 			],
-			"transformations": [],
+			"transformations": [
+				{
+					"name": "SortByName"
+				}
+			],
 			"scriptLines": [
 				"source(output(",
 				"          ProductID as integer,",
@@ -99,6 +103,8 @@
 				"     validateSchema: false,",
 				"     isolationLevel: 'READ_UNCOMMITTED',",
 				"     format: 'table') ~> WWImportersDBSource",
+				"WWImportersDBSource sort(asc(StockItemName, true),",
+				"     caseInsensitive: true) ~> SortByName",
 				"AdvWorksDBSource sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     deletable:false,",
@@ -111,7 +117,7 @@
 				"     skipDuplicateMapOutputs: true,",
 				"     saveOrder: 1,",
 				"     errorHandlingOption: 'stopOnFirstError') ~> MergeDBProductSink",
-				"WWImportersDBSource sink(allowSchemaDrift: true,",
+				"SortByName sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     deletable:false,",
 				"     insertable:true,",
