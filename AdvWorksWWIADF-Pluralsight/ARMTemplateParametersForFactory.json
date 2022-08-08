@@ -8,13 +8,10 @@
 		"AdeventureWorks_connectionString": {
 			"value": ""
 		},
-		"WWImporters_connectionString": {
-			"value": ""
-		},
-		"AzureSqlDatabase1_connectionString": {
-			"value": ""
-		},
 		"MergeDB_connectionString": {
+			"value": ""
+		},
+		"WWImporters_connectionString": {
 			"value": ""
 		}
 	}

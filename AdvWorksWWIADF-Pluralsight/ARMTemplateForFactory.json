@@ -11,173 +11,19 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'AdeventureWorks'"
 		},
-		"WWImporters_connectionString": {
-			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'WWImporters'"
-		},
-		"AzureSqlDatabase1_connectionString": {
-			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'AzureSqlDatabase1'"
-		},
 		"MergeDB_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'MergeDB'"
+		},
+		"WWImporters_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'WWImporters'"
 		}
 	},
 	"variables": {
 		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
 	},
 	"resources": [
-		{
-			"name": "[concat(parameters('factoryName'), '/AdvWorksWWIMergeDF')]",
-			"type": "Microsoft.DataFactory/factories/dataflows",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"type": "MappingDataFlow",
-				"typeProperties": {
-					"sources": [
-						{
-							"dataset": {
-								"referenceName": "AdventureWorksProducts",
-								"type": "DatasetReference"
-							},
-							"name": "AdvWorksDBSource"
-						},
-						{
-							"dataset": {
-								"referenceName": "WWImportersStockItems",
-								"type": "DatasetReference"
-							},
-							"name": "WWImportersDBSource"
-						}
-					],
-					"sinks": [
-						{
-							"dataset": {
-								"referenceName": "MergeDBProducts",
-								"type": "DatasetReference"
-							},
-							"name": "MergeDBProductSink"
-						},
-						{
-							"dataset": {
-								"referenceName": "MergeDBClothes",
-								"type": "DatasetReference"
-							},
-							"name": "MergeDBClothesSink"
-						}
-					],
-					"transformations": [],
-					"scriptLines": [
-						"source(output(",
-						"          ProductID as integer,",
-						"          Name as string,",
-						"          ProductNumber as string,",
-						"          MakeFlag as boolean,",
-						"          FinishedGoodsFlag as boolean,",
-						"          Color as string,",
-						"          SafetyStockLevel as integer,",
-						"          ReorderPoint as integer,",
-						"          StandardCost as decimal(19,4),",
-						"          ListPrice as decimal(19,4),",
-						"          Size as string,",
-						"          SizeUnitMeasureCode as string,",
-						"          WeightUnitMeasureCode as string,",
-						"          Weight as decimal(8,2),",
-						"          DaysToManufacture as integer,",
-						"          ProductLine as string,",
-						"          Class as string,",
-						"          Style as string,",
-						"          ProductSubcategoryID as integer,",
-						"          ProductModelID as integer,",
-						"          SellStartDate as timestamp,",
-						"          SellEndDate as timestamp,",
-						"          DiscontinuedDate as timestamp,",
-						"          rowguid as string,",
-						"          ModifiedDate as timestamp",
-						"     ),",
-						"     allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     isolationLevel: 'READ_UNCOMMITTED',",
-						"     format: 'table') ~> AdvWorksDBSource",
-						"source(output(",
-						"          StockItemID as integer,",
-						"          StockItemName as string,",
-						"          SupplierID as integer,",
-						"          ColorID as integer,",
-						"          UnitPackageID as integer,",
-						"          OuterPackageID as integer,",
-						"          Brand as string,",
-						"          Size as string,",
-						"          LeadTimeDays as integer,",
-						"          QuantityPerOuter as integer,",
-						"          IsChillerStock as boolean,",
-						"          Barcode as string,",
-						"          TaxRate as decimal(18,3),",
-						"          UnitPrice as decimal(18,2),",
-						"          RecommendedRetailPrice as decimal(18,2),",
-						"          TypicalWeightPerUnit as decimal(18,3),",
-						"          MarketingComments as string,",
-						"          InternalComments as string,",
-						"          Photo as binary,",
-						"          CustomFields as string,",
-						"          Tags as string,",
-						"          SearchDetails as string,",
-						"          LastEditedBy as integer,",
-						"          ValidFrom as timestamp,",
-						"          ValidTo as timestamp",
-						"     ),",
-						"     allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     isolationLevel: 'READ_UNCOMMITTED',",
-						"     format: 'table') ~> WWImportersDBSource",
-						"AdvWorksDBSource sink(allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     deletable:false,",
-						"     insertable:true,",
-						"     updateable:false,",
-						"     upsertable:false,",
-						"     recreate:true,",
-						"     format: 'table',",
-						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true,",
-						"     saveOrder: 1,",
-						"     errorHandlingOption: 'stopOnFirstError') ~> MergeDBProductSink",
-						"WWImportersDBSource sink(allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     deletable:false,",
-						"     insertable:true,",
-						"     updateable:false,",
-						"     upsertable:false,",
-						"     recreate:true,",
-						"     format: 'table',",
-						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true,",
-						"     saveOrder: 1,",
-						"     errorHandlingOption: 'stopOnFirstError') ~> MergeDBClothesSink"
-					]
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/AdventureWorksProducts')]",
-				"[concat(variables('factoryId'), '/datasets/WWImportersStockItems')]",
-				"[concat(variables('factoryId'), '/datasets/MergeDBProducts')]",
-				"[concat(variables('factoryId'), '/datasets/MergeDBClothes')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/AdeventureWorks')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "AzureSqlDatabase",
-				"typeProperties": {
-					"connectionString": "[parameters('AdeventureWorks_connectionString')]"
-				}
-			},
-			"dependsOn": []
-		},
 		{
 			"name": "[concat(parameters('factoryName'), '/AdventureWorksProducts')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
@@ -321,17 +167,46 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/WWImporters')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"name": "[concat(parameters('factoryName'), '/MergeDBClothes')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
+				"linkedServiceName": {
+					"referenceName": "MergeDB",
+					"type": "LinkedServiceReference"
+				},
 				"annotations": [],
-				"type": "AzureSqlDatabase",
+				"type": "AzureSqlTable",
+				"schema": [],
 				"typeProperties": {
-					"connectionString": "[parameters('WWImporters_connectionString')]"
+					"schema": "dbo",
+					"table": "Clothes"
 				}
 			},
-			"dependsOn": []
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/MergeDB')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/MergeDBProducts')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "MergeDB",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "Products"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/MergeDB')]"
+			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/WWImportersStockItems')]",
@@ -474,14 +349,14 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/AzureSqlDatabase1')]",
+			"name": "[concat(parameters('factoryName'), '/AdeventureWorks')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"annotations": [],
 				"type": "AzureSqlDatabase",
 				"typeProperties": {
-					"connectionString": "[parameters('AzureSqlDatabase1_connectionString')]"
+					"connectionString": "[parameters('AdeventureWorks_connectionString')]"
 				}
 			},
 			"dependsOn": []
@@ -500,45 +375,159 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/MergeDBProducts')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
+			"name": "[concat(parameters('factoryName'), '/WWImporters')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
 			"properties": {
-				"linkedServiceName": {
-					"referenceName": "MergeDB",
-					"type": "LinkedServiceReference"
-				},
 				"annotations": [],
-				"type": "AzureSqlTable",
-				"schema": [],
+				"type": "AzureSqlDatabase",
 				"typeProperties": {
-					"schema": "dbo",
-					"table": "Products"
+					"connectionString": "[parameters('WWImporters_connectionString')]"
 				}
 			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/MergeDB')]"
-			]
+			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/MergeDBClothes')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
+			"name": "[concat(parameters('factoryName'), '/AdvWorksWWIMergeDF')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
 			"apiVersion": "2018-06-01",
 			"properties": {
-				"linkedServiceName": {
-					"referenceName": "MergeDB",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "AzureSqlTable",
-				"schema": [],
+				"type": "MappingDataFlow",
 				"typeProperties": {
-					"schema": "dbo",
-					"table": "Clothes"
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "AdventureWorksProducts",
+								"type": "DatasetReference"
+							},
+							"name": "AdvWorksDBSource"
+						},
+						{
+							"dataset": {
+								"referenceName": "WWImportersStockItems",
+								"type": "DatasetReference"
+							},
+							"name": "WWImportersDBSource"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "MergeDBProducts",
+								"type": "DatasetReference"
+							},
+							"name": "MergeDBProductSink"
+						},
+						{
+							"dataset": {
+								"referenceName": "MergeDBClothes",
+								"type": "DatasetReference"
+							},
+							"name": "MergeDBClothesSink"
+						}
+					],
+					"transformations": [
+						{
+							"name": "SortByName"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          ProductID as integer,",
+						"          Name as string,",
+						"          ProductNumber as string,",
+						"          MakeFlag as boolean,",
+						"          FinishedGoodsFlag as boolean,",
+						"          Color as string,",
+						"          SafetyStockLevel as integer,",
+						"          ReorderPoint as integer,",
+						"          StandardCost as decimal(19,4),",
+						"          ListPrice as decimal(19,4),",
+						"          Size as string,",
+						"          SizeUnitMeasureCode as string,",
+						"          WeightUnitMeasureCode as string,",
+						"          Weight as decimal(8,2),",
+						"          DaysToManufacture as integer,",
+						"          ProductLine as string,",
+						"          Class as string,",
+						"          Style as string,",
+						"          ProductSubcategoryID as integer,",
+						"          ProductModelID as integer,",
+						"          SellStartDate as timestamp,",
+						"          SellEndDate as timestamp,",
+						"          DiscontinuedDate as timestamp,",
+						"          rowguid as string,",
+						"          ModifiedDate as timestamp",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     format: 'table') ~> AdvWorksDBSource",
+						"source(output(",
+						"          StockItemID as integer,",
+						"          StockItemName as string,",
+						"          SupplierID as integer,",
+						"          ColorID as integer,",
+						"          UnitPackageID as integer,",
+						"          OuterPackageID as integer,",
+						"          Brand as string,",
+						"          Size as string,",
+						"          LeadTimeDays as integer,",
+						"          QuantityPerOuter as integer,",
+						"          IsChillerStock as boolean,",
+						"          Barcode as string,",
+						"          TaxRate as decimal(18,3),",
+						"          UnitPrice as decimal(18,2),",
+						"          RecommendedRetailPrice as decimal(18,2),",
+						"          TypicalWeightPerUnit as decimal(18,3),",
+						"          MarketingComments as string,",
+						"          InternalComments as string,",
+						"          Photo as binary,",
+						"          CustomFields as string,",
+						"          Tags as string,",
+						"          SearchDetails as string,",
+						"          LastEditedBy as integer,",
+						"          ValidFrom as timestamp,",
+						"          ValidTo as timestamp",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     format: 'table') ~> WWImportersDBSource",
+						"WWImportersDBSource sort(asc(StockItemName, true),",
+						"     caseInsensitive: true) ~> SortByName",
+						"AdvWorksDBSource sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     deletable:false,",
+						"     insertable:true,",
+						"     updateable:false,",
+						"     upsertable:false,",
+						"     recreate:true,",
+						"     format: 'table',",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     saveOrder: 1,",
+						"     errorHandlingOption: 'stopOnFirstError') ~> MergeDBProductSink",
+						"SortByName sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     deletable:false,",
+						"     insertable:true,",
+						"     updateable:false,",
+						"     upsertable:false,",
+						"     recreate:true,",
+						"     format: 'table',",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     saveOrder: 1,",
+						"     errorHandlingOption: 'stopOnFirstError') ~> MergeDBClothesSink"
+					]
 				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/MergeDB')]"
+				"[concat(variables('factoryId'), '/datasets/AdventureWorksProducts')]",
+				"[concat(variables('factoryId'), '/datasets/WWImportersStockItems')]",
+				"[concat(variables('factoryId'), '/datasets/MergeDBProducts')]",
+				"[concat(variables('factoryId'), '/datasets/MergeDBClothes')]"
 			]
 		}
 	]

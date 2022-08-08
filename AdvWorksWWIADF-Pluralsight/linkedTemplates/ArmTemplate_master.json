@@ -11,17 +11,13 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'AdeventureWorks'"
 		},
-		"WWImporters_connectionString": {
-			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'WWImporters'"
-		},
-		"AzureSqlDatabase1_connectionString": {
-			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'AzureSqlDatabase1'"
-		},
 		"MergeDB_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'MergeDB'"
+		},
+		"WWImporters_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'WWImporters'"
 		},
 		"containerUri": {
 			"type": "string",
@@ -53,14 +49,11 @@
 					"AdeventureWorks_connectionString": {
 						"value": "[parameters('AdeventureWorks_connectionString')]"
 					},
-					"WWImporters_connectionString": {
-						"value": "[parameters('WWImporters_connectionString')]"
-					},
-					"AzureSqlDatabase1_connectionString": {
-						"value": "[parameters('AzureSqlDatabase1_connectionString')]"
-					},
 					"MergeDB_connectionString": {
 						"value": "[parameters('MergeDB_connectionString')]"
+					},
+					"WWImporters_connectionString": {
+						"value": "[parameters('WWImporters_connectionString')]"
 					}
 				}
 			},
