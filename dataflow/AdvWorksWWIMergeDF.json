@@ -38,6 +38,9 @@
 			"transformations": [
 				{
 					"name": "SortByName"
+				},
+				{
+					"name": "FilterDiscontinued"
 				}
 			],
 			"scriptLines": [
@@ -105,7 +108,8 @@
 				"     format: 'table') ~> WWImportersDBSource",
 				"WWImportersDBSource sort(asc(StockItemName, true),",
 				"     caseInsensitive: true) ~> SortByName",
-				"AdvWorksDBSource sink(allowSchemaDrift: true,",
+				"AdvWorksDBSource filter(isNull(SellEndDate)) ~> FilterDiscontinued",
+				"FilterDiscontinued sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     deletable:false,",
 				"     insertable:true,",
