@@ -388,6 +388,55 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/AdvWorksWWIMergePL')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "AdvWorksWWIMergeDF",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "1.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "AdvWorksWWIMergeDF",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"AdvWorksDBSource": {},
+									"WWImportersDBSource": {},
+									"MergeDBProductSink": {},
+									"MergeDBClothesSink": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/AdvWorksWWIMergeDF')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/AdvWorksWWIMergeDF')]",
 			"type": "Microsoft.DataFactory/factories/dataflows",
 			"apiVersion": "2018-06-01",
@@ -429,6 +478,9 @@
 					"transformations": [
 						{
 							"name": "SortByName"
+						},
+						{
+							"name": "FilterDiscontinued"
 						}
 					],
 					"scriptLines": [
@@ -496,7 +548,8 @@
 						"     format: 'table') ~> WWImportersDBSource",
 						"WWImportersDBSource sort(asc(StockItemName, true),",
 						"     caseInsensitive: true) ~> SortByName",
-						"AdvWorksDBSource sink(allowSchemaDrift: true,",
+						"AdvWorksDBSource filter(isNull(SellEndDate)) ~> FilterDiscontinued",
+						"FilterDiscontinued sink(allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     deletable:false,",
 						"     insertable:true,",
