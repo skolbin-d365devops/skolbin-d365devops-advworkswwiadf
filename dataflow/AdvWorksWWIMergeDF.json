@@ -26,6 +26,13 @@
 						"type": "DatasetReference"
 					},
 					"name": "MergeDBProductSink"
+				},
+				{
+					"dataset": {
+						"referenceName": "MergeDBClothes",
+						"type": "DatasetReference"
+					},
+					"name": "MergeDBClothesSink"
 				}
 			],
 			"transformations": [],
@@ -103,7 +110,18 @@
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
 				"     saveOrder: 1,",
-				"     errorHandlingOption: 'stopOnFirstError') ~> MergeDBProductSink"
+				"     errorHandlingOption: 'stopOnFirstError') ~> MergeDBProductSink",
+				"WWImportersDBSource sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     recreate:true,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError') ~> MergeDBClothesSink"
 			]
 		}
 	}
