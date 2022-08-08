@@ -19,7 +19,15 @@
 					"name": "WWImportersDBSource"
 				}
 			],
-			"sinks": [],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "MergeDBProducts",
+						"type": "DatasetReference"
+					},
+					"name": "MergeDBProductSink"
+				}
+			],
 			"transformations": [],
 			"scriptLines": [
 				"source(output(",
@@ -83,7 +91,19 @@
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     isolationLevel: 'READ_UNCOMMITTED',",
-				"     format: 'table') ~> WWImportersDBSource"
+				"     format: 'table') ~> WWImportersDBSource",
+				"AdvWorksDBSource sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     recreate:true,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     saveOrder: 1,",
+				"     errorHandlingOption: 'stopOnFirstError') ~> MergeDBProductSink"
 			]
 		}
 	}
