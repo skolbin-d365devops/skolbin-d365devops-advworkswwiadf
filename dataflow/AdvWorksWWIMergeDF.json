@@ -92,6 +92,9 @@
 				},
 				{
 					"name": "AggregateByProductModel"
+				},
+				{
+					"name": "RankByAveragePrice"
 				}
 			],
 			"scriptLines": [
@@ -230,6 +233,8 @@
 				"     broadcast: 'auto')~> JoinModel",
 				"JoinModel aggregate(groupBy(ProductModelName),",
 				"     AverageCost = avg(StandardCost)) ~> AggregateByProductModel",
+				"AggregateByProductModel rank(desc(AverageCost, true),",
+				"     output(Rank as long)) ~> RankByAveragePrice",
 				"UnionAllProducts sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     deletable:false,",
