@@ -1,7 +1,7 @@
 {
 	"name": "AdvWorksWWIMergeDF",
 	"properties": {
-		"description": "Windows Internals, Part 2 ",
+		"description": "AdvWorksWWIMergeDF",
 		"type": "MappingDataFlow",
 		"typeProperties": {
 			"sources": [
