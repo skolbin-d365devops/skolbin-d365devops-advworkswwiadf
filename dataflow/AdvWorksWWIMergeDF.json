@@ -18,6 +18,13 @@
 						"type": "DatasetReference"
 					},
 					"name": "WWImportersDBSource"
+				},
+				{
+					"dataset": {
+						"referenceName": "WWImportersStockItems",
+						"type": "DatasetReference"
+					},
+					"name": "WWImportersColorSource"
 				}
 			],
 			"sinks": [
@@ -54,6 +61,9 @@
 				},
 				{
 					"name": "SelectWWImportersColumns"
+				},
+				{
+					"name": "WWImportersColorsLookup"
 				}
 			],
 			"scriptLines": [
@@ -119,6 +129,15 @@
 				"     validateSchema: false,",
 				"     isolationLevel: 'READ_UNCOMMITTED',",
 				"     format: 'table') ~> WWImportersDBSource",
+				"source(output(",
+				"          ColorId as integer,",
+				"          Color as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     query: 'SELECT ColorId, ColorName as Color FROM Warehouse.Colors',",
+				"     format: 'query') ~> WWImportersColorSource",
 				"WWImportersDBSource sort(asc(StockItemName, true),",
 				"     caseInsensitive: true) ~> SortByName",
 				"AdvWorksDBSource filter(isNull(SellEndDate)) ~> FilterDiscontinued",
@@ -144,8 +163,9 @@
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true) ~> SelectAdvWorksColumns",
-				"DeriveFinalCostAndProductType select(mapColumn(",
+				"WWImportersColorsLookup select(mapColumn(",
 				"          Name = StockItemName,",
+				"          Color,",
 				"          Cost,",
 				"          RetailPrice = RecommendedRetailPrice,",
 				"          Size,",
@@ -153,6 +173,10 @@
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true) ~> SelectWWImportersColumns",
+				"DeriveFinalCostAndProductType, WWImportersColorSource lookup(WWImportersDBSource@ColorID == WWImportersColorSource@ColorId,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> WWImportersColorsLookup",
 				"DeriveProductType sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     deletable:false,",
