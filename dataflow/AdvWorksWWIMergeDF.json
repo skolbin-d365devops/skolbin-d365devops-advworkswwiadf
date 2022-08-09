@@ -89,6 +89,9 @@
 				},
 				{
 					"name": "JoinModel"
+				},
+				{
+					"name": "AggregateByProductModel"
 				}
 			],
 			"scriptLines": [
@@ -225,6 +228,10 @@
 				"     matchType:'exact',",
 				"     ignoreSpaces: false,",
 				"     broadcast: 'auto')~> JoinModel",
+				"JoinModel aggregate(groupBy(ProductModelName),",
+				"     AverageCost = avg(StandardCost),",
+				"          MaxCost = max(StandardCost),",
+				"          MinCost = min(StandardCost)) ~> AggregateByProductModel",
 				"UnionAllProducts sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     deletable:false,",
