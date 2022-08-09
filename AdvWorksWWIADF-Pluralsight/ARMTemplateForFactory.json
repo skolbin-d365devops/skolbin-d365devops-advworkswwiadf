@@ -25,6 +25,55 @@
 	},
 	"resources": [
 		{
+			"name": "[concat(parameters('factoryName'), '/AdvWorksWWIMergePL')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "AdvWorksWWIMergeDF",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "1.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "AdvWorksWWIMergeDF",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"AdvWorksDBSource": {},
+									"WWImportersDBSource": {},
+									"MergeDBProductSink": {},
+									"MergeDBClothesSink": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/AdvWorksWWIMergeDF')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/AdventureWorksProducts')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -388,59 +437,11 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/AdvWorksWWIMergePL')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "AdvWorksWWIMergeDF",
-						"type": "ExecuteDataFlow",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "1.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"dataflow": {
-								"referenceName": "AdvWorksWWIMergeDF",
-								"type": "DataFlowReference",
-								"parameters": {},
-								"datasetParameters": {
-									"AdvWorksDBSource": {},
-									"WWImportersDBSource": {},
-									"MergeDBProductSink": {},
-									"MergeDBClothesSink": {}
-								}
-							},
-							"staging": {},
-							"compute": {
-								"coreCount": 8,
-								"computeType": "General"
-							},
-							"traceLevel": "Fine"
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {},
-					"cancelAfter": {}
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/dataflows/AdvWorksWWIMergeDF')]"
-			]
-		},
-		{
 			"name": "[concat(parameters('factoryName'), '/AdvWorksWWIMergeDF')]",
 			"type": "Microsoft.DataFactory/factories/dataflows",
 			"apiVersion": "2018-06-01",
 			"properties": {
+				"description": "Windows Internals, Part 2 ",
 				"type": "MappingDataFlow",
 				"typeProperties": {
 					"sources": [
@@ -562,15 +563,13 @@
 						"     caseInsensitive: true) ~> SortByName",
 						"AdvWorksDBSource filter(isNull(SellEndDate)) ~> FilterDiscontinued",
 						"SortByName derive(Cost = UnitPrice*(1+(TaxRate/100)),",
-						"          ItemType = /* This script uses case and in to define if the item is clothing or product */\r",
-						"case(\r",
+						"          ItemType = case(\r",
 						"/* case syntax: case(condition, true_expression, false_expression) */\r",
 						"in(['S','M','L','3XL','3XS','4XL','5XL','6XL','7XL','XS','XXS','XL','XXL'],Size),\r",
 						"/* in will test if the value of the Size column matches any value of this array. Notice the square brackets representing the array */\r",
 						"'Clothing', 'Product'\r",
 						"/* if true, it's clothing, if false it is product */)) ~> DeriveFinalCostAndProductType",
-						"SelectAdvWorksColumns derive(ItemType = /* This script uses case and in to define if the item is clothing or product */\r",
-						"case(\r",
+						"SelectAdvWorksColumns derive(ItemType = case(\r",
 						"/* case syntax: case(condition, true_expression, false_expression) */\r",
 						"in(['S','M','L','XL'],Size),\r",
 						"/* in will test if the value of the Size column matches any value of this array. Notice the square brackets representing the array */\r",

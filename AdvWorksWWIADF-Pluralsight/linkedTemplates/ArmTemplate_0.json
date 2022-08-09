@@ -392,6 +392,7 @@
 			"type": "Microsoft.DataFactory/factories/dataflows",
 			"apiVersion": "2018-06-01",
 			"properties": {
+				"description": "Windows Internals, Part 2 ",
 				"type": "MappingDataFlow",
 				"typeProperties": {
 					"sources": [
@@ -513,15 +514,13 @@
 						"     caseInsensitive: true) ~> SortByName",
 						"AdvWorksDBSource filter(isNull(SellEndDate)) ~> FilterDiscontinued",
 						"SortByName derive(Cost = UnitPrice*(1+(TaxRate/100)),",
-						"          ItemType = /* This script uses case and in to define if the item is clothing or product */\r",
-						"case(\r",
+						"          ItemType = case(\r",
 						"/* case syntax: case(condition, true_expression, false_expression) */\r",
 						"in(['S','M','L','3XL','3XS','4XL','5XL','6XL','7XL','XS','XXS','XL','XXL'],Size),\r",
 						"/* in will test if the value of the Size column matches any value of this array. Notice the square brackets representing the array */\r",
 						"'Clothing', 'Product'\r",
 						"/* if true, it's clothing, if false it is product */)) ~> DeriveFinalCostAndProductType",
-						"SelectAdvWorksColumns derive(ItemType = /* This script uses case and in to define if the item is clothing or product */\r",
-						"case(\r",
+						"SelectAdvWorksColumns derive(ItemType = case(\r",
 						"/* case syntax: case(condition, true_expression, false_expression) */\r",
 						"in(['S','M','L','XL'],Size),\r",
 						"/* in will test if the value of the Size column matches any value of this array. Notice the square brackets representing the array */\r",
