@@ -461,6 +461,15 @@
 						},
 						{
 							"name": "WWImportersSplitClothesFromProducts"
+						},
+						{
+							"name": "CheckRepeatedClothes"
+						},
+						{
+							"name": "UnionAllClothes"
+						},
+						{
+							"name": "UnionAllProducts"
 						}
 					],
 					"scriptLines": [
@@ -578,7 +587,12 @@
 						"     disjoint: false) ~> AdvWorksSplitClothesFromProducts@(AdvWorksProducts, AdvWorksClothing)",
 						"SelectWWImportersColumns split(ItemType == 'Product',",
 						"     disjoint: false) ~> WWImportersSplitClothesFromProducts@(WWImportersProducts, WWImportersClothing)",
-						"AdvWorksSplitClothesFromProducts@AdvWorksProducts sink(allowSchemaDrift: true,",
+						"AdvWorksSplitClothesFromProducts@AdvWorksClothing, WWImportersSplitClothesFromProducts@WWImportersClothing exists(AdvWorksSplitClothesFromProducts@AdvWorksClothing@Name == WWImportersSplitClothesFromProducts@WWImportersClothing@Name,",
+						"     negate:true,",
+						"     broadcast: 'auto')~> CheckRepeatedClothes",
+						"CheckRepeatedClothes, WWImportersSplitClothesFromProducts@WWImportersClothing union(byName: true)~> UnionAllClothes",
+						"WWImportersSplitClothesFromProducts@WWImportersProducts, AdvWorksSplitClothesFromProducts@AdvWorksProducts union(byName: true)~> UnionAllProducts",
+						"UnionAllProducts sink(allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     deletable:false,",
 						"     insertable:true,",
@@ -590,7 +604,7 @@
 						"     skipDuplicateMapOutputs: true,",
 						"     saveOrder: 1,",
 						"     errorHandlingOption: 'stopOnFirstError') ~> MergeDBProductSink",
-						"WWImportersSplitClothesFromProducts@WWImportersProducts sink(allowSchemaDrift: true,",
+						"UnionAllClothes sink(allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     deletable:false,",
 						"     insertable:true,",
