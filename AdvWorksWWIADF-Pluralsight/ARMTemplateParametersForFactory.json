@@ -4,15 +4,6 @@
 	"parameters": {
 		"factoryName": {
 			"value": "AdvWorksWWIADF-Pluralsight"
-		},
-		"AdeventureWorks_connectionString": {
-			"value": ""
-		},
-		"MergeDB_connectionString": {
-			"value": ""
-		},
-		"WWImporters_connectionString": {
-			"value": ""
 		}
 	}
 }
