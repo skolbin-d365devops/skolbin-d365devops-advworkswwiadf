@@ -1,7 +1,7 @@
 {
 	"name": "AdvWorksWWIMergeDF",
 	"properties": {
-		"description": "AdvWorksWWIMerge Data Flow",
+		"description": "AdvWorksWWIMerge DataFlow",
 		"type": "MappingDataFlow",
 		"typeProperties": {
 			"sources": [
@@ -89,6 +89,12 @@
 				},
 				{
 					"name": "JoinModel"
+				},
+				{
+					"name": "AggregateByProductModel"
+				},
+				{
+					"name": "RankByAveragePrice"
 				}
 			],
 			"scriptLines": [
@@ -225,6 +231,10 @@
 				"     matchType:'exact',",
 				"     ignoreSpaces: false,",
 				"     broadcast: 'auto')~> JoinModel",
+				"JoinModel aggregate(groupBy(ProductModelName),",
+				"     AverageCost = avg(StandardCost)) ~> AggregateByProductModel",
+				"AggregateByProductModel rank(desc(AverageCost, true),",
+				"     output(Rank as long)) ~> RankByAveragePrice",
 				"UnionAllProducts sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     deletable:false,",
