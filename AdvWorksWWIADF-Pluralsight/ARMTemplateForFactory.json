@@ -50,6 +50,7 @@
 								"datasetParameters": {
 									"AdvWorksDBSource": {},
 									"WWImportersDBSource": {},
+									"WWImportersColorSource": {},
 									"MergeDBProductSink": {},
 									"MergeDBClothesSink": {}
 								}
@@ -458,6 +459,13 @@
 								"type": "DatasetReference"
 							},
 							"name": "WWImportersDBSource"
+						},
+						{
+							"dataset": {
+								"referenceName": "WWImportersStockItems",
+								"type": "DatasetReference"
+							},
+							"name": "WWImportersColorSource"
 						}
 					],
 					"sinks": [
@@ -494,6 +502,15 @@
 						},
 						{
 							"name": "SelectWWImportersColumns"
+						},
+						{
+							"name": "WWImportersColorsLookup"
+						},
+						{
+							"name": "AdvWorksSplitClothesFromProducts"
+						},
+						{
+							"name": "WWImportersSplitClothesFromProducts"
 						}
 					],
 					"scriptLines": [
@@ -559,6 +576,15 @@
 						"     validateSchema: false,",
 						"     isolationLevel: 'READ_UNCOMMITTED',",
 						"     format: 'table') ~> WWImportersDBSource",
+						"source(output(",
+						"          ColorId as integer,",
+						"          Color as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     query: 'SELECT ColorId, ColorName as Color FROM Warehouse.Colors',",
+						"     format: 'query') ~> WWImportersColorSource",
 						"WWImportersDBSource sort(asc(StockItemName, true),",
 						"     caseInsensitive: true) ~> SortByName",
 						"AdvWorksDBSource filter(isNull(SellEndDate)) ~> FilterDiscontinued",
@@ -584,8 +610,9 @@
 						"     ),",
 						"     skipDuplicateMapInputs: true,",
 						"     skipDuplicateMapOutputs: true) ~> SelectAdvWorksColumns",
-						"DeriveFinalCostAndProductType select(mapColumn(",
+						"WWImportersColorsLookup select(mapColumn(",
 						"          Name = StockItemName,",
+						"          Color,",
 						"          Cost,",
 						"          RetailPrice = RecommendedRetailPrice,",
 						"          Size,",
@@ -593,7 +620,15 @@
 						"     ),",
 						"     skipDuplicateMapInputs: true,",
 						"     skipDuplicateMapOutputs: true) ~> SelectWWImportersColumns",
-						"DeriveProductType sink(allowSchemaDrift: true,",
+						"DeriveFinalCostAndProductType, WWImportersColorSource lookup(WWImportersDBSource@ColorID == WWImportersColorSource@ColorId,",
+						"     multiple: false,",
+						"     pickup: 'any',",
+						"     broadcast: 'auto')~> WWImportersColorsLookup",
+						"DeriveProductType split(ItemType == 'Product',",
+						"     disjoint: false) ~> AdvWorksSplitClothesFromProducts@(AdvWorksProducts, AdvWorksClothing)",
+						"SelectWWImportersColumns split(ItemType == 'Product',",
+						"     disjoint: false) ~> WWImportersSplitClothesFromProducts@(WWImportersProducts, WWImportersClothing)",
+						"AdvWorksSplitClothesFromProducts@AdvWorksProducts sink(allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     deletable:false,",
 						"     insertable:true,",
@@ -605,7 +640,7 @@
 						"     skipDuplicateMapOutputs: true,",
 						"     saveOrder: 1,",
 						"     errorHandlingOption: 'stopOnFirstError') ~> MergeDBProductSink",
-						"SelectWWImportersColumns sink(allowSchemaDrift: true,",
+						"WWImportersSplitClothesFromProducts@WWImportersProducts sink(allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     deletable:false,",
 						"     insertable:true,",
