@@ -392,7 +392,7 @@
 			"type": "Microsoft.DataFactory/factories/dataflows",
 			"apiVersion": "2018-06-01",
 			"properties": {
-				"description": "AdvWorksWWIMergeDF",
+				"description": "AdvWorksWWIMerge Data Flow",
 				"type": "MappingDataFlow",
 				"typeProperties": {
 					"sources": [
