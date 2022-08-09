@@ -185,7 +185,7 @@
 				"     broadcast: 'auto')~> WWImportersColorsLookup",
 				"DeriveProductType split(ItemType == 'Product',",
 				"     disjoint: false) ~> AdvWorksSplitClothesFromProducts@(AdvWorksProducts, AdvWorksClothing)",
-				"SelectWWImportersColumns split(ItemType == 'Products',",
+				"SelectWWImportersColumns split(ItemType == 'Product',",
 				"     disjoint: false) ~> WWImportersSplitClothesFromProducts@(WWImportersProducts, WWImportersClothing)",
 				"AdvWorksSplitClothesFromProducts@AdvWorksProducts sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
