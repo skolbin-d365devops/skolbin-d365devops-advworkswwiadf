@@ -1,7 +1,7 @@
 {
 	"name": "AdvWorksWWIMergeDF",
 	"properties": {
-		"description": "AdvWorksWWIMergeDF",
+		"description": "AdvWorksWWIMerge Data Flow",
 		"type": "MappingDataFlow",
 		"typeProperties": {
 			"sources": [
