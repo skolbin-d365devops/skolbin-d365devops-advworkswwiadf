@@ -108,6 +108,9 @@
 				},
 				{
 					"name": "AddPKProducts"
+				},
+				{
+					"name": "AllowOnlyProductUpserts"
 				}
 			],
 			"scriptLines": [
@@ -255,13 +258,14 @@
 				"UnionAllProducts keyGenerate(output(ProductId as long),",
 				"     startAt: 1L,",
 				"     stepValue: 1L) ~> AddPKProducts",
-				"AddPKProducts sink(allowSchemaDrift: true,",
+				"AddPKProducts alterRow(upsertIf(true())) ~> AllowOnlyProductUpserts",
+				"AllowOnlyProductUpserts sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     deletable:false,",
-				"     insertable:true,",
+				"     insertable:false,",
 				"     updateable:false,",
-				"     upsertable:false,",
-				"     recreate:true,",
+				"     upsertable:true,",
+				"     keys:['Name'],",
 				"     format: 'table',",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
