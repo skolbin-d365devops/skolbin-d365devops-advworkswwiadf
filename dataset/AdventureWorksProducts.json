@@ -2,7 +2,7 @@
 	"name": "AdventureWorksProducts",
 	"properties": {
 		"linkedServiceName": {
-			"referenceName": "AdeventureWorks",
+			"referenceName": "AdventureWorks",
 			"type": "LinkedServiceReference"
 		},
 		"annotations": [],
