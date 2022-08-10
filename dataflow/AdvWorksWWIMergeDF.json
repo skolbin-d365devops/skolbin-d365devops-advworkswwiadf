@@ -105,6 +105,9 @@
 				},
 				{
 					"name": "AddPKClothes"
+				},
+				{
+					"name": "AddPKProducts"
 				}
 			],
 			"scriptLines": [
@@ -249,7 +252,10 @@
 				"UnionAllClothes keyGenerate(output(ClothingId as long),",
 				"     startAt: 1L,",
 				"     stepValue: 1L) ~> AddPKClothes",
-				"UnionAllProducts sink(allowSchemaDrift: true,",
+				"UnionAllProducts keyGenerate(output(ProductId as long),",
+				"     startAt: 1L,",
+				"     stepValue: 1L) ~> AddPKProducts",
+				"AddPKProducts sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     deletable:false,",
 				"     insertable:true,",
