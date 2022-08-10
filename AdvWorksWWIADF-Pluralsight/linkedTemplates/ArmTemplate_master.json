@@ -7,10 +7,6 @@
 			"metadata": "Data Factory name",
 			"defaultValue": "AdvWorksWWIADF-Pluralsight"
 		},
-		"AdeventureWorks_connectionString": {
-			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'AdeventureWorks'"
-		},
 		"AdvWorksBlobLS_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'AdvWorksBlobLS'"
@@ -18,6 +14,10 @@
 		"AdventureWorks_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'AdventureWorks'"
+		},
+		"AdventureWorksLT_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'AdventureWorksLT'"
 		},
 		"MergeDB_connectionString": {
 			"type": "secureString",
@@ -54,14 +54,14 @@
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
 					},
-					"AdeventureWorks_connectionString": {
-						"value": "[parameters('AdeventureWorks_connectionString')]"
-					},
 					"AdvWorksBlobLS_connectionString": {
 						"value": "[parameters('AdvWorksBlobLS_connectionString')]"
 					},
 					"AdventureWorks_connectionString": {
 						"value": "[parameters('AdventureWorks_connectionString')]"
+					},
+					"AdventureWorksLT_connectionString": {
+						"value": "[parameters('AdventureWorksLT_connectionString')]"
 					},
 					"MergeDB_connectionString": {
 						"value": "[parameters('MergeDB_connectionString')]"

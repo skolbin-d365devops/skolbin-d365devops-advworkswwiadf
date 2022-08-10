@@ -5,13 +5,13 @@
 		"factoryName": {
 			"value": "AdvWorksWWIADF-Pluralsight"
 		},
-		"AdeventureWorks_connectionString": {
-			"value": ""
-		},
 		"AdvWorksBlobLS_connectionString": {
 			"value": ""
 		},
 		"AdventureWorks_connectionString": {
+			"value": ""
+		},
+		"AdventureWorksLT_connectionString": {
 			"value": ""
 		},
 		"MergeDB_connectionString": {
