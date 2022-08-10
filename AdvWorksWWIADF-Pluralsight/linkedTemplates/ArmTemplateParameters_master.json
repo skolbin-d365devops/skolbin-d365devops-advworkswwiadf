@@ -11,6 +11,9 @@
 		"AdvWorksBlobLS_connectionString": {
 			"value": ""
 		},
+		"AdventureWorks_connectionString": {
+			"value": ""
+		},
 		"MergeDB_connectionString": {
 			"value": ""
 		},
