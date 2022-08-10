@@ -48,6 +48,13 @@
 						"type": "DatasetReference"
 					},
 					"name": "MergeDBClothesSink"
+				},
+				{
+					"dataset": {
+						"referenceName": "AdvWorksBlobDS",
+						"type": "DatasetReference"
+					},
+					"name": "AdvWorksBlobSink"
 				}
 			],
 			"transformations": [
@@ -259,7 +266,11 @@
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
 				"     saveOrder: 1,",
-				"     errorHandlingOption: 'stopOnFirstError') ~> MergeDBClothesSink"
+				"     errorHandlingOption: 'stopOnFirstError') ~> MergeDBClothesSink",
+				"RankByAveragePrice sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> AdvWorksBlobSink"
 			]
 		}
 	}
