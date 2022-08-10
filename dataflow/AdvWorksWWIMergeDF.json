@@ -143,6 +143,9 @@
 				{
 					"name": "MapDriftedEventDates",
 					"description": "Creates an explicit mapping for each drifted column"
+				},
+				{
+					"name": "UnpivotEventDates"
 				}
 			],
 			"scriptLines": [
@@ -336,6 +339,17 @@
 				"          ConNoteCode = EventDetails.ConNote) ~> DeriveComplexSubcolumns",
 				"PivotEventDates derive(Item_DeliveryAttempt_Date = toDate(byName('Item_DeliveryAttempt_Date')),",
 				"          {Item_Ready for collection_Date} = toDate(byName('Item_Ready for collection_Date'))) ~> MapDriftedEventDates",
+				"MapDriftedEventDates unpivot(output(",
+				"          DeliveryEvent as string,",
+				"          DeliveredWhen as date,",
+				"          Item_DeliveryAttempt_Date as date,",
+				"          {Item_Ready for collection_Date} as date",
+				"     ),",
+				"     ungroupBy(InvoiceId,",
+				"          ReceivedBy,",
+				"          ConNoteCode),",
+				"     lateral: true,",
+				"     ignoreNullPivots: false) ~> UnpivotEventDates",
 				"AllowOnlyProductUpserts sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     deletable:false,",
