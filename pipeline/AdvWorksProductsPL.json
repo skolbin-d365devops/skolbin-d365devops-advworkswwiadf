@@ -8,7 +8,10 @@
 				"dependsOn": [],
 				"userProperties": [],
 				"typeProperties": {
-					"waitTimeInSeconds": 1
+					"waitTimeInSeconds": {
+						"value": "@pipeline().parameters.WaitSeconds",
+						"type": "Expression"
+					}
 				}
 			},
 			{
@@ -49,7 +52,7 @@
 				},
 				"inputs": [
 					{
-						"referenceName": "AdventureWorksProducts",
+						"referenceName": "AdventureWorksProductsLT",
 						"type": "DatasetReference"
 					}
 				],
@@ -59,8 +62,41 @@
 						"type": "DatasetReference"
 					}
 				]
+			},
+			{
+				"name": "UpdateProducts",
+				"type": "SqlServerStoredProcedure",
+				"dependsOn": [
+					{
+						"activity": "DumpToBlob",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"storedProcedureName": "[dbo].[UpdateProducts]"
+				},
+				"linkedServiceName": {
+					"referenceName": "AdventureWorksLT",
+					"type": "LinkedServiceReference"
+				}
 			}
 		],
+		"parameters": {
+			"WaitSeconds": {
+				"type": "int",
+				"defaultValue": 1
+			}
+		},
 		"annotations": []
 	}
 }
