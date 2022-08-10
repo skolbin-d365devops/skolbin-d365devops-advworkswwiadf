@@ -1,0 +1,21 @@
+{
+	"name": "AdvWorksBlobDS",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AdvWorksBlobLS",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"container": "advworkswwi"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"quoteChar": "\""
+		},
+		"schema": []
+	}
+}
