@@ -52,7 +52,7 @@
 				},
 				"inputs": [
 					{
-						"referenceName": "AdventureWorksProducts",
+						"referenceName": "AdventureWorksProductsLT",
 						"type": "DatasetReference"
 					}
 				],
