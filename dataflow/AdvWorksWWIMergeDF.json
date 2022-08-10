@@ -139,6 +139,10 @@
 				},
 				{
 					"name": "DeriveComplexSubcolumns"
+				},
+				{
+					"name": "MapDriftedEventDates",
+					"description": "Creates an explicit mapping for each drifted column"
 				}
 			],
 			"scriptLines": [
@@ -325,11 +329,13 @@
 				"          ConNoteCode),",
 				"     pivotBy(EventName),",
 				"     {} = first(EventTime),",
-				"     columnNaming: '$N$V',",
-				"     lateral: true) ~> PivotEventDates",
+				"     columnNaming: 'Item_$N$V_Date',",
+				"     lateral: false) ~> PivotEventDates",
 				"ParseJsonEvents derive(EventName = EventDetails.Event,",
 				"          EventTime = EventDetails.EventTime,",
 				"          ConNoteCode = EventDetails.ConNote) ~> DeriveComplexSubcolumns",
+				"PivotEventDates derive(Item_DeliveryAttempt_Date = toDate(byName('Item_DeliveryAttempt_Date')),",
+				"          {Item_Ready for collection_Date} = toDate(byName('Item_Ready for collection_Date'))) ~> MapDriftedEventDates",
 				"AllowOnlyProductUpserts sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     deletable:false,",
