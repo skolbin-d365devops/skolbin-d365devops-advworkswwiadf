@@ -130,6 +130,15 @@
 				},
 				{
 					"name": "FlattenEvents"
+				},
+				{
+					"name": "ParseJsonEvents"
+				},
+				{
+					"name": "PivotEventDates"
+				},
+				{
+					"name": "DeriveComplexSubcolumns"
 				}
 			],
 			"scriptLines": [
@@ -305,6 +314,22 @@
 				"     ),",
 				"     skipDuplicateMapInputs: false,",
 				"     skipDuplicateMapOutputs: false) ~> FlattenEvents",
+				"FlattenEvents parse(EventDetails = Events ? (Event as string,",
+				"          EventTime as date,",
+				"          ConNote as string),",
+				"     format: 'json',",
+				"     documentForm: 'singleDocument') ~> ParseJsonEvents",
+				"DeriveComplexSubcolumns pivot(groupBy(InvoiceId,",
+				"          ReceivedBy,",
+				"          DeliveredWhen,",
+				"          ConNoteCode),",
+				"     pivotBy(EventName),",
+				"     {} = first(EventTime),",
+				"     columnNaming: '$N$V',",
+				"     lateral: true) ~> PivotEventDates",
+				"ParseJsonEvents derive(EventName = EventDetails.Event,",
+				"          EventTime = EventDetails.EventTime,",
+				"          ConNoteCode = EventDetails.ConNote) ~> DeriveComplexSubcolumns",
 				"AllowOnlyProductUpserts sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     deletable:false,",
