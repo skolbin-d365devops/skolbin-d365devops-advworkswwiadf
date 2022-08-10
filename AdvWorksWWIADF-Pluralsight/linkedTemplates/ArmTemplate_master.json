@@ -11,6 +11,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'AdeventureWorks'"
 		},
+		"AdvWorksBlobLS_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'AdvWorksBlobLS'"
+		},
 		"MergeDB_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'MergeDB'"
@@ -48,6 +52,9 @@
 					},
 					"AdeventureWorks_connectionString": {
 						"value": "[parameters('AdeventureWorks_connectionString')]"
+					},
+					"AdvWorksBlobLS_connectionString": {
+						"value": "[parameters('AdvWorksBlobLS_connectionString')]"
 					},
 					"MergeDB_connectionString": {
 						"value": "[parameters('MergeDB_connectionString')]"

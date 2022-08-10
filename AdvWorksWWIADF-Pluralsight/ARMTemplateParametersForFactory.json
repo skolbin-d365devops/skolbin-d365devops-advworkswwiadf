@@ -8,6 +8,9 @@
 		"AdeventureWorks_connectionString": {
 			"value": ""
 		},
+		"AdvWorksBlobLS_connectionString": {
+			"value": ""
+		},
 		"MergeDB_connectionString": {
 			"value": ""
 		},

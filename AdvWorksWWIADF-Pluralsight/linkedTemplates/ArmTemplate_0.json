@@ -11,6 +11,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'AdeventureWorks'"
 		},
+		"AdvWorksBlobLS_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'AdvWorksBlobLS'"
+		},
 		"MergeDB_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'MergeDB'"
@@ -33,6 +37,19 @@
 				"type": "AzureSqlDatabase",
 				"typeProperties": {
 					"connectionString": "[parameters('AdeventureWorks_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AdvWorksBlobLS')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobStorage",
+				"typeProperties": {
+					"connectionString": "[parameters('AdvWorksBlobLS_connectionString')]"
 				}
 			},
 			"dependsOn": []
@@ -62,6 +79,32 @@
 				}
 			},
 			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AdvWorksBlobDS')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AdvWorksBlobLS",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"container": "advworkswwi"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AdvWorksBlobLS')]"
+			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/AdventureWorksProducts')]",
@@ -439,6 +482,13 @@
 								"type": "DatasetReference"
 							},
 							"name": "MergeDBClothesSink"
+						},
+						{
+							"dataset": {
+								"referenceName": "AdvWorksBlobDS",
+								"type": "DatasetReference"
+							},
+							"name": "AdvWorksBlobSink"
 						}
 					],
 					"transformations": [
@@ -625,7 +675,8 @@
 						"JoinModel aggregate(groupBy(ProductModelName),",
 						"     AverageCost = avg(StandardCost)) ~> AggregateByProductModel",
 						"AggregateByProductModel rank(desc(AverageCost, true),",
-						"     output(Rank as long)) ~> RankByAveragePrice",
+						"     output(Rank as long),",
+						"     dense: true) ~> RankByAveragePrice",
 						"UnionAllProducts sink(allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     deletable:false,",
@@ -649,7 +700,11 @@
 						"     skipDuplicateMapInputs: true,",
 						"     skipDuplicateMapOutputs: true,",
 						"     saveOrder: 1,",
-						"     errorHandlingOption: 'stopOnFirstError') ~> MergeDBClothesSink"
+						"     errorHandlingOption: 'stopOnFirstError') ~> MergeDBClothesSink",
+						"RankByAveragePrice sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> AdvWorksBlobSink"
 					]
 				}
 			},
@@ -657,7 +712,8 @@
 				"[concat(variables('factoryId'), '/datasets/AdventureWorksProducts')]",
 				"[concat(variables('factoryId'), '/datasets/WWImportersStockItems')]",
 				"[concat(variables('factoryId'), '/datasets/MergeDBProducts')]",
-				"[concat(variables('factoryId'), '/datasets/MergeDBClothes')]"
+				"[concat(variables('factoryId'), '/datasets/MergeDBClothes')]",
+				"[concat(variables('factoryId'), '/datasets/AdvWorksBlobDS')]"
 			]
 		},
 		{
@@ -689,7 +745,8 @@
 									"WWImportersColorSource": {},
 									"AdvWorksCheckModel": {},
 									"MergeDBProductSink": {},
-									"MergeDBClothesSink": {}
+									"MergeDBClothesSink": {},
+									"AdvWorksBlobSink": {}
 								}
 							},
 							"staging": {},
