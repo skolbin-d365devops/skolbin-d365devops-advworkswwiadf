@@ -32,6 +32,13 @@
 						"type": "DatasetReference"
 					},
 					"name": "AdvWorksCheckModel"
+				},
+				{
+					"dataset": {
+						"referenceName": "WWImportersStockItems",
+						"type": "DatasetReference"
+					},
+					"name": "WWImportersGetInvoiceEvents"
 				}
 			],
 			"sinks": [
@@ -117,6 +124,12 @@
 				},
 				{
 					"name": "WindowClothes"
+				},
+				{
+					"name": "ParseJSONColumn"
+				},
+				{
+					"name": "FlattenEvents"
 				}
 			],
 			"scriptLines": [
@@ -200,6 +213,15 @@
 				"     isolationLevel: 'READ_UNCOMMITTED',",
 				"     query: 'SELECT ProductModelId, Name as ProductModelName FROM Production.ProductModel',",
 				"     format: 'query') ~> AdvWorksCheckModel",
+				"source(output(",
+				"          InvoiceId as integer,",
+				"          ReturnedDeliveryData as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     query: 'SELECT InvoiceId, ReturnedDeliveryData FROM Sales.Invoices',",
+				"     format: 'query') ~> WWImportersGetInvoiceEvents",
 				"WWImportersDBSource sort(asc(StockItemName, true),",
 				"     caseInsensitive: true) ~> SortByName",
 				"AdvWorksDBSource filter(isNull(SellEndDate)) ~> FilterDiscontinued",
@@ -269,6 +291,20 @@
 				"DeriveProfitability window(over(Size),",
 				"     desc(Profitability, true),",
 				"     Rank = denseRank()) ~> WindowClothes",
+				"WWImportersGetInvoiceEvents parse(JsonData = ReturnedDeliveryData ? (ReceivedBy as string,",
+				"          DeliveredWhen as date,",
+				"          Events as string[]),",
+				"     format: 'json',",
+				"     documentForm: 'singleDocument') ~> ParseJSONColumn",
+				"ParseJSONColumn foldDown(unroll(JsonData.Events),",
+				"     mapColumn(",
+				"          InvoiceId,",
+				"          ReceivedBy = JsonData.ReceivedBy,",
+				"          DeliveredWhen = JsonData.DeliveredWhen,",
+				"          Events = JsonData.Events",
+				"     ),",
+				"     skipDuplicateMapInputs: false,",
+				"     skipDuplicateMapOutputs: false) ~> FlattenEvents",
 				"AllowOnlyProductUpserts sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     deletable:false,",
